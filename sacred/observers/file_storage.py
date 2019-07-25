@@ -5,7 +5,7 @@ import json
 import os
 import os.path
 
-from shutil import copyfile
+from shutil import copyfile, copytree
 
 from sacred.commandline_options import CommandLineOption
 from sacred.dependencies import get_digest
@@ -160,6 +160,10 @@ class FileStorageObserver(RunObserver):
         target_name = target_name or os.path.basename(filename)
         copyfile(filename, os.path.join(self.dir, target_name))
 
+    def save_dir(self, filename, target_name=None):
+        target_name = target_name or os.path.basename(filename)
+        copytree(filename, os.path.join(self.dir, target_name))
+
     def save_cout(self):
         with open(os.path.join(self.dir, 'cout.txt'), 'ab') as f:
             f.write(self.cout[self.cout_write_cursor:].encode("utf-8"))
@@ -214,8 +218,11 @@ class FileStorageObserver(RunObserver):
         self.run_entry['resources'].append([filename, store_path])
         self.save_json(self.run_entry, 'run.json')
 
-    def artifact_event(self, name, filename, metadata=None, content_type=None):
-        self.save_file(filename, name)
+    def artifact_event(self, name, filename, metadata=None, content_type=None, recursive=False):
+        if recursive:
+            self.save_dir(filename, name)
+        else:
+            self.save_file(filename, name)
         self.run_entry['artifacts'].append(name)
         self.save_json(self.run_entry, 'run.json')
 
