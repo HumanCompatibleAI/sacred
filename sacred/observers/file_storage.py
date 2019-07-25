@@ -218,12 +218,14 @@ class FileStorageObserver(RunObserver):
         self.run_entry['resources'].append([filename, store_path])
         self.save_json(self.run_entry, 'run.json')
 
-    def artifact_event(self, name, filename, metadata=None, content_type=None, recursive=False):
-        if recursive:
-            self.save_dir(filename, name)
-        else:
-            self.save_file(filename, name)
+    def artifact_event(self, name, filename, metadata=None, content_type=None):
+        self.save_file(filename, name)
         self.run_entry['artifacts'].append(name)
+        self.save_json(self.run_entry, 'run.json')
+
+    def artifact_directory_event(self, name, filename, metadata=None, content_type=None):
+        self.save_dir(filename, name)
+        self.run_entry['artifacts'].append(name + "/")
         self.save_json(self.run_entry, 'run.json')
 
     def log_metrics(self, metrics_by_name, info):

@@ -388,12 +388,18 @@ class Run:
 
     def _emit_artifact_added(self, name, filename, recursive, metadata, content_type):
         for observer in self.observers:
-            self._safe_call(observer, 'artifact_event',
-                            name=name,
-                            filename=filename,
-                            recursive=recursive,
-                            metadata=metadata,
-                            content_type=content_type)
+            if recursive:
+                self._safe_call(observer, 'artifact_directory_event',
+                                name=name,
+                                filename=filename,
+                                metadata=metadata,
+                                content_type=content_type)
+            else:
+                self._safe_call(observer, 'artifact_event',
+                                name=name,
+                                filename=filename,
+                                metadata=metadata,
+                                content_type=content_type)
 
     def _safe_call(self, obs, method, **kwargs):
         if obs not in self._failed_observers and hasattr(obs, method):
