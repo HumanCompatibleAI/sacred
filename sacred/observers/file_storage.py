@@ -223,7 +223,7 @@ class FileStorageObserver(RunObserver):
         self.run_entry['artifacts'].append(name)
         self.save_json(self.run_entry, 'run.json')
 
-    def artifact_directory_event(self, name, filename, metadata=None, content_type=None):
+    def artifact_directory_event(self, name, filename):
         self.save_dir(filename, name)
         self.run_entry['artifacts'].append(name + "/")
         self.save_json(self.run_entry, 'run.json')
