@@ -391,11 +391,16 @@ class Run:
                              metadata, content_type):
         for observer in self.observers:
             if recursive:
-                self._safe_call(observer, 'artifact_directory_event',
-                                name=name,
-                                filename=filename,
-                                metadata=metadata,
-                                content_type=content_type)
+                if hasattr(observer, 'artifact_directory_event'):
+                    self._safe_call(observer, 'artifact_directory_event',
+                                    name=name,
+                                    filename=filename)
+                else:
+                    self.run_logger.warning("Observer of type {} "
+                                            " doesn't support"
+                                            " recursive artifacts".format(
+                                                                type(observer)
+                                                                ))
             else:
                 self._safe_call(observer, 'artifact_event',
                                 name=name,
