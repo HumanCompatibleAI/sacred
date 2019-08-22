@@ -291,3 +291,13 @@ class CaptureOption(CommandLineOption):
     @classmethod
     def apply(cls, args, run):
         run.capture_mode = args
+
+
+class RunIdOption(CommandLineOption):
+    """Set the _id used by this run's observers"""
+    arg = 'RUN_ID'
+    arg_description = "id used by this run's observers"
+
+    @classmethod
+    def apply(cls, args, run):
+        run._id = args
